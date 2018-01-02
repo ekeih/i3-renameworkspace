@@ -11,8 +11,8 @@ import i3ipc
 import re
 
 class WorkspaceRenamer(object):
-    
-    prefixRegex = re.compile('\d+:\S+')
+
+    prefixRegex = re.compile('(\d+):(\d*).*')
 
     def __init__(self):
         self.i3 = i3ipc.Connection()
@@ -25,17 +25,19 @@ class WorkspaceRenamer(object):
     def getWorkspacePrefix(self):
         workspace = self.findFocusedWorkspace()
         oldname = workspace.name
-        prefix = self.prefixRegex.match(oldname)
+        match = self.prefixRegex.match(oldname)
+        if match.group(1) == match.group(2):
+            prefix = '{}:{}'.format(match.group(1),match.group(1))
+        else:
+            prefix = '{}:'.format(match.group(1))
         if prefix is None:
             raise LookupError("No workspace name found")
-        return prefix[0]
+        return prefix
 
     def interactiveRenameCurrentWorkspace(self):
         prefix = self.getWorkspacePrefix()
-        renameCommand = 'rename workspace to "{} %s"'.format(prefix)
+        renameCommand = 'rename workspace to "{}%s"'.format(prefix)
         inputCommand = """exec i3-input -F '{}' -P "Rename workspace to: {} " """.format(renameCommand, prefix)
-        print(renameCommand)
-        print(inputCommand)
         self.i3.command(inputCommand)
 
 def main():
