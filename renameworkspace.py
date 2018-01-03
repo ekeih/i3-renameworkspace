@@ -37,7 +37,7 @@ class WorkspaceRenamer(object):
     def interactiveRenameCurrentWorkspace(self):
         prefix = self.getWorkspacePrefix()
         renameCommand = 'rename workspace to "{}%s"'.format(prefix)
-        inputCommand = """exec i3-input -F '{}' -P "Rename workspace to: {} " """.format(renameCommand, prefix)
+        inputCommand = """exec i3-input -F '{}' -P "Rename workspace to: {}" """.format(renameCommand, prefix)
         self.i3.command(inputCommand)
 
 def main():
